@@ -5,19 +5,35 @@ class Jarvis:
 
     def __init__(self):
         print("Loading JARVIS...")
+
         self.skill_manager = SkillManager()
+        self.skill_manager.load_skills()
+
+        print("Skills loaded:", list(self.skill_manager.skills.keys()))
 
     def process(self, user_input):
+        user_input = user_input.strip()
 
-        skill = self.skill_manager.find_skill(user_input)
+        if user_input.lower().startswith("calculate "):
 
-        if skill:
-            expression = user_input
+            expression = user_input[10:].strip()
 
-            expression = expression.replace("calculate", "")
-            expression = expression.replace("calc", "")
-            expression = expression.strip()
+            calculator = self.skill_manager.get_skill("calculator")
 
-            return skill.execute(expression)
+            if calculator:
+                return calculator.execute(expression)
+
+            return "Calculator skill is not available."
+
+        if user_input.lower().startswith("search "):
+
+            query = user_input[7:].strip()
+
+            web_search = self.skill_manager.get_skill("web_search")
+
+            if web_search:
+                return web_search.execute(query)
+
+            return "Web search skill is not available."
 
         return f"You said: {user_input}"
